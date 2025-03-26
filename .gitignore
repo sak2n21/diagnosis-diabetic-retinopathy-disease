@@ -1,0 +1,29 @@
+# .gitignore for Diabetic Retinopathy Project
+
+# Frontend (React)
+node_modules/
+.env
+.env.local
+build/
+.DS_Store
+
+# Backend (Python/Flask)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+uploads/  # Exclude uploaded images
+
+# Machine Learning model (if large)
+*.keras
+*.h5
+*.pth
+*.bin
+
+# IDE/Editor files
+.vscode/
+.idea/
