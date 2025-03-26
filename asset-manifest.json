@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/diagnosis-diabetic-retinopathy-disease/static/css/main.e6c13ad2.css",
+    "main.js": "/diagnosis-diabetic-retinopathy-disease/static/js/main.334013ef.js",
+    "static/js/453.8ab44547.chunk.js": "/diagnosis-diabetic-retinopathy-disease/static/js/453.8ab44547.chunk.js",
+    "static/media/bg6.jpg": "/diagnosis-diabetic-retinopathy-disease/static/media/bg6.2b875c36119dc87aeb08.jpg",
+    "index.html": "/diagnosis-diabetic-retinopathy-disease/index.html",
+    "main.e6c13ad2.css.map": "/diagnosis-diabetic-retinopathy-disease/static/css/main.e6c13ad2.css.map",
+    "main.334013ef.js.map": "/diagnosis-diabetic-retinopathy-disease/static/js/main.334013ef.js.map",
+    "453.8ab44547.chunk.js.map": "/diagnosis-diabetic-retinopathy-disease/static/js/453.8ab44547.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e6c13ad2.css",
+    "static/js/main.334013ef.js"
+  ]
+}
