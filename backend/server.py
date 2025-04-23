@@ -18,7 +18,8 @@ CORS(app, resources={r"/upload": {"origins": "http://localhost:3000"}})
 
 # Load the model with error handling
 try:
-    model = tf.keras.models.load_model("cnn_model.keras")
+    # Update this path to your new model
+    model = tf.keras.models.load_model("complete_dr_model.keras")
     print("✅ Model loaded successfully")
 except Exception as e:
     print(f"❌ Error loading model: {e}")
@@ -107,10 +108,8 @@ def get_classification_justification(class_index):
         "detail": "<p>No specific details available. Seek medical consultation.</p>",
     })
 
-
-
 def preprocess_image(image):
-    """Preprocess an image to match Colab preprocessing: extract green channel, apply CLAHE, normalize."""
+    """Preprocess an image to match your DenseNet121 model's expected input."""
     if isinstance(image, Image.Image):  # Convert PIL Image to NumPy
         image = np.array(image)
 
@@ -123,37 +122,16 @@ def preprocess_image(image):
     else:
         raise ValueError(f"Unexpected image type: {type(image)}")
 
-    # Resize to 256x256
-    img = cv2.resize(img, (256, 256))
-
-    # Extract Green Channel
-    if len(img.shape) == 3:
-        green_channel = img[:, :, 1]  # Extract green channel
-    else:
-        green_channel = img  # Already grayscale
-
-    # Convert to uint8 (CLAHE requires 8-bit images)
-    green_channel = np.clip(green_channel, 0, 255).astype(np.uint8)
-
-    # Apply CLAHE
-    clahe = cv2.createCLAHE(clipLimit=30.0, tileGridSize=(8, 8))
-    enhanced_img = clahe.apply(green_channel)  # Apply CLAHE to grayscale image
-
-    # Normalize to range [0, 1]
-    processed_img = enhanced_img.astype(np.float32) / 255.0
-
-    # Expand dimensions for model input compatibility
-    processed_img = np.expand_dims(processed_img, axis=-1)  # Add channel axis
-    processed_img = np.expand_dims(processed_img, axis=0)  # Add batch dimension
-
-    predictions = model.predict(processed_img)
-    print("Raw Model Prediction:", predictions)  # Debugging output
-    predicted_class_index = np.argmax(predictions)
-    print("Predicted Class Index:", predicted_class_index)  # Debugging output
-
-
-    return processed_img
-
+    # Resize to 224x224 to match your DenseNet121 model's input size
+    img = cv2.resize(img, (224, 224))
+    
+    # Normalize to range [0, 1] as done in your training code
+    img = img.astype(np.float32) / 255.0
+    
+    # Add batch dimension
+    img = np.expand_dims(img, axis=0)
+    
+    return img
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -200,7 +178,7 @@ def upload_file():
         # Make prediction
         predictions = model.predict(processed_image)
         print("Raw Model Prediction:", predictions)  # Debugging output
-        predicted_class_index = np.argmax(predictions)
+        predicted_class_index = np.argmax(predictions[0])  # Get the class index from the first item in batch
         print("Predicted Class Index:", predicted_class_index)  # Debugging output
 
         predicted_class = class_labels[predicted_class_index]
@@ -211,7 +189,7 @@ def upload_file():
         # Construct response
         result = {
             "classification": predicted_class,
-            "confidence": float(np.max(predictions)),  # Highest confidence score
+            "confidence": float(np.max(predictions[0])),  # Highest confidence score
             "justification": treatment_suggestion["justification"],
             "danger": treatment_suggestion["danger"],
             "detail": treatment_suggestion["detail"],
