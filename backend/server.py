@@ -5,7 +5,7 @@ from PIL import Image
 import io
 import cv2
 from flask_cors import CORS
-
+import gdown
 import os;
 
 UPLOAD_FOLDER = "./uploads"
@@ -16,14 +16,34 @@ app = Flask(__name__)
 # Allow CORS only for React frontend
 CORS(app, resources={r"/upload": {"origins": "http://localhost:3000"}})
 
+# # Load the model with error handling
+# try:
+#     # Update this path to your new model
+#     model = tf.keras.models.load_model("complete_dr_model.keras")
+#     print("✅ Model loaded successfully")
+# except Exception as e:
+#     print(f"❌ Error loading model: {e}")
+#     model = None  # Avoid crashes
+
+
 # Load the model with error handling
 try:
-    # Update this path to your new model
-    model = tf.keras.models.load_model("complete_dr_model.keras")
+    model_path = "complete_dr_model.keras"
+    
+    # If the model file is missing, download it
+    if not os.path.exists(model_path):
+        print("📥 Downloading model from Google Drive...")
+        url = "https://drive.google.com/uc?id=1VMhpaZMHWbqYFa7-Y5HBm01nl_F2Z_l1"
+        gdown.download(url, model_path, quiet=False)
+
+    model = tf.keras.models.load_model(model_path)
     print("✅ Model loaded successfully")
+
 except Exception as e:
     print(f"❌ Error loading model: {e}")
     model = None  # Avoid crashes
+
+
 
 # Class labels
 class_labels = [
